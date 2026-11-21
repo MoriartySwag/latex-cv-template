@@ -1,0 +1,527 @@
+% =============================================================================
+%  ONE-FILE LaTeX CV TEMPLATE (beginner friendly)
+% =============================================================================
+%
+%  WHAT IS THIS?
+%  LaTeX is a typesetting language: you write plain text plus a few commands,
+%  and a compiler turns it into a clean PDF. This file is a complete CV. All the
+%  names, companies and numbers below are PLACEHOLDERS: replace them with yours.
+%
+%  HOW TO TURN THIS FILE INTO A PDF (pick one)
+%    a) Overleaf (no install): overleaf.com -> New Project -> Upload Project ->
+%       upload this .tex file -> click "Recompile". Compiler must be pdfLaTeX
+%       (Menu -> Settings -> Compiler), which is Overleaf's default.
+%    b) On your computer (needs TeX Live or MacTeX installed), in a terminal:
+%           latexmk -pdf cv_template.tex
+%       or, if you do not have latexmk:
+%           pdflatex cv_template.tex
+%
+%  HOW THIS FILE IS ORGANISED
+%    PART A - SETTINGS   (page size, fonts, spacing, layout helpers).
+%             You can leave this part alone. Each number that is worth
+%             tweaking has a comment saying what happens if you change it.
+%    PART B - YOUR CONTENT (starts at \begin{document}). This is where you type.
+%
+%  THE 5 RULES THAT PREVENT 90% OF BEGINNER ERRORS
+%    1. A % starts a COMMENT: everything after it on that line is ignored and
+%       never appears in the PDF. (That is what all these lines are.)
+%    2. Braces { } always come in pairs. Every { needs its matching }.
+%    3. Every \begin{something} needs a matching \end{something}.
+%    4. These characters are special. To print them, put a backslash first:
+%           %  -> \%      &  -> \&      $  -> \$      _  -> \_      #  -> \#
+%    5. A blank line starts a new paragraph. Single line breaks are ignored,
+%       so you can split long sentences over several lines freely.
+%
+%  HANDY FORMATTING
+%    \textbf{bold}   \textit{italic}   \textit{\textbf{bold italic}}
+%    --  (two hyphens) gives a date-range dash: JAN 2024 -- MAR 2025
+%    $\rightarrow$   gives an arrow:  30 $\rightarrow$ 360
+%    \vspace{0.2 cm} adds vertical space; a negative value pulls things up.
+%
+%  WHEN SOMETHING BREAKS
+%    The compiler reports the LINE NUMBER of the first error. Look there and
+%    just above it for: a missing }, an unescaped % or &, or a \begin without
+%    its \end. Fix the FIRST error first; later ones are often side effects.
+% =============================================================================
+
+
+% =============================================================================
+%  PART A - SETTINGS  (safe to leave as is)
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% A1. Document type, base font size and paper size
+% -----------------------------------------------------------------------------
+% 10pt  = body text size. Allowed: 10pt, 11pt, 12pt (bigger = longer CV).
+% letterpaper = US Letter. Use a4paper for A4 (common outside North America).
+\documentclass[10pt, letterpaper]{article}
+
+% -----------------------------------------------------------------------------
+% A2. Page margins
+% -----------------------------------------------------------------------------
+% Smaller margins fit more text on a page. 1 cm left/right is already tight;
+% going lower may get cut off by some printers.
+\usepackage[
+    ignoreheadfoot,  % margins ignore header/footer space (this CV has neither)
+    top=2 cm,        % space between the page's top edge and the text
+    bottom=2 cm,     % space between the page's bottom edge and the text
+    left=1 cm,       % space between the page's left edge and the text
+    right=1 cm,      % space between the page's right edge and the text
+    footskip=1.0 cm, % distance to the footer (unused, kept for completeness)
+    % showframe,     % remove the % at the start of this line to draw the
+                     % margin boxes - useful when adjusting layout
+]{geometry}
+
+% -----------------------------------------------------------------------------
+% A3. Packages (add-ons). Each line loads one tool this CV uses.
+% -----------------------------------------------------------------------------
+\usepackage{titlesec}            % lets us restyle the \section headings
+\usepackage[dvipsnames]{xcolor}  % colours
+\usepackage{enumitem}            % lets us restyle bullet lists
+\usepackage{fontawesome5}        % icons: \faEnvelope, \faPhone, \faLinkedin ...
+\usepackage{changepage}          % 'adjustwidth', used by the entry blocks
+\usepackage{paracol}             % side-by-side columns (text left, date right)
+\usepackage{needspace}           % keeps a heading from being stranded at the
+                                 % bottom of a page without its content
+
+% Main colour used for links. Black means links look like normal text, which
+% is what most recruiters expect. Try {RGB}{0, 79, 144} for a dark blue.
+\definecolor{primaryColor}{RGB}{0, 0, 0}
+
+% Clickable links + PDF properties (the "File > Properties" info of the PDF).
+% Change pdftitle and pdfauthor to your own name.
+\usepackage[
+    pdftitle={Alex Morgan CV},
+    pdfauthor={Alex Morgan},
+    colorlinks=true,          % colour the link text instead of drawing boxes
+    urlcolor=primaryColor,    % colour of web/email links
+]{hyperref}
+
+% -----------------------------------------------------------------------------
+% A4. Fonts and machine-readable text (helps Applicant Tracking Systems)
+% -----------------------------------------------------------------------------
+% With pdfLaTeX, these lines make the PDF's text copy-pasteable and searchable,
+% so automated CV scanners can read it. They do not change how it looks.
+\usepackage{iftex}
+\ifPDFTeX
+    \input{glyphtounicode}
+    \pdfgentounicode=1
+    \usepackage[T1]{fontenc}
+\fi
+
+% Body font: Charter (a clean, readable serif). Delete this line to get the
+% default LaTeX font, or try \usepackage{helvet} with
+% \renewcommand{\familydefault}{\sfdefault} for a sans-serif look.
+\usepackage{charter}
+
+% -----------------------------------------------------------------------------
+% A5. General page behaviour
+% -----------------------------------------------------------------------------
+\pagestyle{empty}                 % no header or footer
+\pagenumbering{gobble}            % no page numbers
+\setcounter{secnumdepth}{0}       % headings are not numbered (no "1 Education")
+\setlength{\parindent}{0pt}       % paragraphs are not indented
+\setlength{\topskip}{0pt}         % no extra space at the top of each page
+\setlength{\columnsep}{0.15cm}    % gap between the text column and date column
+\AtBeginEnvironment{adjustwidth}{\partopsep0pt} % no extra space before entries
+
+% -----------------------------------------------------------------------------
+% A6. Section heading style  (e.g. "EXPERIENCE" with a line under it)
+% -----------------------------------------------------------------------------
+% \needspace{4\baselineskip}: if fewer than ~4 lines are left on the page,
+%     start the heading on the next page instead.
+% \bfseries\large: bold and slightly bigger. \titlerule: the horizontal line.
+\titleformat{\section}
+    {\needspace{4\baselineskip}\bfseries\large}  % look of the heading
+    {}{0pt}{}                                    % (no numbers)
+    [\vspace{1pt}\titlerule]                     % line under the heading
+
+% Space around every heading: {left}{above}{below}.
+% Increase "above" to separate sections more; decrease to save space.
+\titlespacing{\section}{-1pt}{0.3 cm}{0.2 cm}
+
+% -----------------------------------------------------------------------------
+% A7. Layout building blocks used in PART B
+% -----------------------------------------------------------------------------
+% You will use three blocks over and over:
+%
+%   onecolentry  - a full-width block of text.
+%       \begin{onecolentry}
+%           Any text here.
+%       \end{onecolentry}
+%
+%   twocolentry  - text on the left, short text (usually dates) on the right.
+%       \begin{twocolentry}{RIGHT SIDE, e.g. dates}
+%           LEFT SIDE, e.g. company and job title
+%       \end{twocolentry}
+%       (Yes, the RIGHT side is written first, in the { } after \begin.)
+%
+%   highlights   - a bullet list. One \item per bullet.
+%       \begin{highlights}
+%           \item First bullet
+%           \item Second bullet
+%       \end{highlights}
+
+% Bullet symbol: a small, vertically centred dot.
+\renewcommand\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}
+
+% highlights = a compact bullet list.
+\newenvironment{highlights}{
+    \begin{itemize}[
+        topsep=0.10 cm,   % space above and below the whole list
+        parsep=0.10 cm,   % space between bullets (bigger = airier list)
+        partopsep=0pt,
+        itemsep=0pt,
+        leftmargin=10pt   % how far bullets are indented from the left
+    ]
+}{
+    \end{itemize}
+}
+
+% onecolentry = a full-width block (practically no extra indent left/right).
+% IMPORTANT: keep 0.00001 cm. It looks pointless, but with exactly 0 cm the
+% date column of every twocolentry below silently disappears from the PDF.
+\newenvironment{onecolentry}{
+    \begin{adjustwidth}{0.00001 cm}{0.00001 cm}
+}{
+    \end{adjustwidth}
+}
+
+% twocolentry = left column takes the remaining width, right column is 4.5 cm.
+% If your dates wrap onto two lines, increase 4.5 cm; if company names wrap
+% too early, decrease it. This one number affects EVERY two-column entry.
+% Tip: keep the left text to one line. If it wraps, an empty gap appears
+% under the dates - shorten the text (e.g. "DEPT." instead of "DEPARTMENT").
+\newenvironment{twocolentry}[1]{
+    \onecolentry
+    \def\secondColumn{#1}
+    \setcolumnwidth{\fill, 4.5 cm}
+    \begin{paracol}{2}
+}{
+    \switchcolumn \raggedleft \secondColumn
+    \end{paracol}
+    \endonecolentry
+}
+
+% header = centred block for your name and contact details.
+% \linespread{1.5} = line spacing inside the header.
+\newenvironment{header}{
+    \setlength{\topsep}{0pt}\par\kern\topsep\centering\linespread{1.5}
+}{
+    \par\kern\topsep
+}
+
+% \contactitem{ICON}{LINK}{TEXT SHOWN}  - one clickable contact detail.
+%   ICON: an icon command such as \faEnvelope (find more icons by searching
+%         "fontawesome5 package documentation").
+%   LINK: where a click goes: mailto:you@x.com, tel:+15550100, https://...
+%   TEXT: what is printed. Keep LINK and TEXT in sync when you edit them!
+\newcommand{\contactitem}[3]{\mbox{\href{#2}{#1\hspace{1pt} #3}}}
+
+% \contactsep  - the " | " separator between contact items.
+% (\AND draws the bar; \unskip and \ignorespaces remove stray spaces.)
+\newsavebox\ANDbox
+\sbox\ANDbox{$|$}
+\newcommand{\AND}{\unskip\cleaders\copy\ANDbox\hskip\wd\ANDbox\ignorespaces}
+\newcommand{\contactsep}{\kern 5pt\AND\kern 5pt}
+
+
+% =============================================================================
+%  PART B - YOUR CONTENT  (edit everything below)
+% =============================================================================
+% Sections appear in the PDF in the same order as they appear here.
+% To remove a section: delete it, or put % in front of each of its lines.
+% To reorder: cut and paste whole sections (from one \section to the next).
+% To rename a heading: change the text inside \section{...}.
+
+\begin{document}
+
+    % -------------------------------------------------------------------------
+    % NAME AND CONTACT DETAILS
+    % -------------------------------------------------------------------------
+    % \fontsize{25 pt}{25 pt}: first number = name size, second = line height.
+    % Delete a \contactitem line (and the \contactsep before it) to drop it.
+    \begin{header}
+        \fontsize{25 pt}{25 pt}\selectfont Alex Morgan
+
+        \vspace{5 pt}
+
+        \normalsize
+        \contactitem{\faEnvelope}{mailto:alex.morgan@example.com}{alex.morgan@example.com}\contactsep
+        \contactitem{\faPhoneSquare}{tel:+15550100}{+1 555 0100}\contactsep
+        \contactitem{\faLinkedin}{https://www.linkedin.com/in/your-profile}{linkedin.com/in/your-profile}\contactsep
+        \contactitem{\faGlobe}{https://example.com}{example.com}
+    \end{header}
+
+    % Pulls the first section slightly closer to the contact line.
+    \vspace{-0.12 cm}
+
+    % -------------------------------------------------------------------------
+    % PROFESSIONAL SUMMARY
+    % -------------------------------------------------------------------------
+    % 2-4 sentences: who you are, years of experience, your biggest results,
+    % and what you bring. Write numbers as \$300M (the $ must be escaped).
+    \section{PROFESSIONAL SUMMARY}
+    \begin{onecolentry}
+        Senior data scientist and applied AI engineer with 3+ years of industry experience across cloud software and consumer technology at Google and Microsoft. Built interpretable forecasting models and scaled personalization systems that contributed over \$300M in incremental revenue, and shipped LLM-powered agent workflows that automate internal operations, backed by a combined bachelor's and master's degree in Electrical Engineering.
+    \end{onecolentry}
+
+    % -------------------------------------------------------------------------
+    % EDUCATION
+    % -------------------------------------------------------------------------
+    % Two rows: (1) institution + dates, (2) degree + GPA.
+    % Copy both twocolentry blocks to add another degree.
+    \section{EDUCATION}
+
+    \begin{twocolentry}{
+        \textbf{AUG 2017 -- MAY 2022}
+        }
+        \textbf{THE UNIVERSITY OF TEXAS AT AUSTIN}
+    \end{twocolentry}
+    \vspace{0.05 cm}
+
+    \begin{twocolentry}{
+        \textit{GPA: 3.7/4.0}
+        }
+        \textit{B.S. + M.S. in Electrical Engineering}
+    \end{twocolentry}
+
+    % -------------------------------------------------------------------------
+    % EXPERIENCE
+    % -------------------------------------------------------------------------
+    % RECIPE - one job = a twocolentry (title row) + a onecolentry (bullets):
+    %
+    %   \begin{twocolentry}{
+    %       \textbf{START -- END}
+    %       }
+    %       \textbf{COMPANY} \textit{(CITY, STATE)}, JOB TITLE
+    %   \end{twocolentry}
+    %   \begin{onecolentry}
+    %       \vspace{0.05 cm}
+    %       \begin{highlights}
+    %           \item What you did, how, and the measurable result
+    %       \end{highlights}
+    %   \end{onecolentry}
+    %   \vspace{0.2 cm}      <- gap before the next job
+    %
+    % Bullet tip: start with a strong verb (Built, Led, Reduced...), and end with
+    % a number (\%, \$, time saved). Bold only the 2-3 words you want skimmed.
+    \section{EXPERIENCE}
+
+    % Job 1: a simple job with one list of bullets.
+    \begin{twocolentry}{
+        \textbf{JAN 2025 -- PRESENT}
+        }
+        \textbf{GOOGLE} \textit{(MOUNTAIN VIEW, CA)}, SENIOR AI ENGINEER
+    \end{twocolentry}
+    \begin{onecolentry}
+        \vspace{0.05 cm}
+        \begin{highlights}
+            \item Redesigned a manual, multi-team device-return process into a single \textbf{auditable pipeline}, consolidating ticket validation, inventory updates and refund approvals behind one \textbf{governed execution path}
+            \item Built a \textbf{Kotlin/Spring Boot service} exposing REST APIs over parameterized PostgreSQL queries, using OAuth 2.0 and \textbf{Secret Manager-backed configuration} to replace brittle legacy scripts without changing business rules
+            \item Stabilized \textbf{LLM outputs} across multi-step tasks with \textbf{JSON schemas}, \textbf{input validation} and curated \textbf{in-context examples}, benchmarking sampling settings across several \textbf{commercial and open-weight models}
+            \item Launched a \textbf{human-in-the-loop agent workflow} that handles requests in parallel and produces one summary report for operators, cutting end-to-end \textbf{handling time by 85\%}
+        \end{highlights}
+    \end{onecolentry}
+    \vspace{0.2 cm}
+
+    % Job 2: a job split into several project groups, each with its own title
+    % (\textit{\textbf{...}}) and bullet list. 0.15 cm separates the groups.
+    \begin{twocolentry}{
+        \textbf{JUL 2022 -- DEC 2024}
+        }
+        \textbf{MICROSOFT} \textit{(REDMOND, WA)}, SENIOR DATA SCIENTIST
+    \end{twocolentry}
+    \begin{onecolentry}
+        \vspace{0.1 cm}
+        \textit{\textbf{Customer Analytics}}
+    \end{onecolentry}
+    \begin{onecolentry}
+        \begin{highlights}
+            \item Built a \textbf{LightGBM}-based \textbf{subscription usage forecasting} model, applying feature selection to cut the input feature set by 70\% while speeding up training and improving \textbf{interpretability}
+            \item Strengthened model reliability with \textbf{Bayesian hyperparameter search} and \textbf{SHAP-based explanations}, turning an opaque model into a reviewable system that met internal \textbf{responsible-AI \& compliance} standards
+            \item Lowered forecast error by \textbf{18\%} (MAPE), adding an estimated \textbf{USD 15M} in \textbf{annual incremental revenue} and extending the \textbf{retraining interval 6x} (monthly $\rightarrow$ semi-annual), which cut maintenance costs
+        \end{highlights}
+    \end{onecolentry}
+    \vspace{0.15 cm}
+    \begin{onecolentry}
+        \textit{\textbf{Marketing Data Platform}}
+    \end{onecolentry}
+    \begin{onecolentry}
+        \begin{highlights}
+            \item Led the build-out of a shared \textbf{feature store} for marketing analytics, letting 25+ downstream models \textbf{reuse common features} and providing a \textbf{scalable data foundation} for new use cases
+            \item Applied time-window and rule-based de-duplication to \textbf{shrink the feature catalog} by 35\%, and defined a \textbf{single source of truth} for every feature, shortening model development cycles
+            \item Drove the \textbf{migration of training pipelines} from on-premise clusters to \textbf{Microsoft Azure}, with data reconciliation, logic standardization and automated regression tests to guarantee \textbf{no data loss}
+        \end{highlights}
+    \end{onecolentry}
+    \vspace{0.15 cm}
+    \begin{onecolentry}
+        \textit{\textbf{Pricing and Promotions}}
+    \end{onecolentry}
+    \begin{onecolentry}
+        \begin{highlights}
+            \item Projected 12-month \textbf{revenue} and \textbf{cost} for a customer rewards promotion by comparing forecast and actual redemption history, informing \textbf{budget planning} and quarterly \textbf{financial targets}
+            \item Analyzed past \textbf{promotion redeemers} to derive \textbf{calibration factors}, refine the incentive framework and surface \textbf{high-ROI} customer cohorts with \textbf{shifting purchase behavior}
+            \item Fed calibrated forecasts into the \textbf{personalized offers} engine, improving funding decisions and raising \textbf{incremental revenue} from USD 200M to \textbf{USD 310M} while protecting margins
+        \end{highlights}
+    \end{onecolentry}
+
+    % -------------------------------------------------------------------------
+    % AWARDS AND ACHIEVEMENTS
+    % -------------------------------------------------------------------------
+    % A plain bullet list (no onecolentry needed). One \item per award.
+    \section{AWARDS AND ACHIEVEMENTS}
+    \begin{highlights}
+        \item \textbf{Microsoft Team Excellence Award -- 2024 (Impact)} for leading the marketing data platform initiative
+        \item \textbf{First place at a national collegiate robotics challenge} as team lead for an autonomous rover design event
+    \end{highlights}
+
+    % -------------------------------------------------------------------------
+    % INTERNSHIPS
+    % -------------------------------------------------------------------------
+    % Same recipe as EXPERIENCE. The location is optional - here it is omitted.
+    \section{INTERNSHIPS}
+    \begin{twocolentry}{
+        \textbf{MAY 2021 -- AUG 2021}
+        }
+        \textbf{AMAZON}, SOFTWARE DEVELOPMENT ENGINEER INTERN
+    \end{twocolentry}
+    \begin{onecolentry}
+        \vspace{0.05 cm}
+        \begin{highlights}
+            \item Built an internal web portal for \textbf{equipment booking and tracking} used by more than 30K employees
+            \item Designed reusable \textbf{back-end \& front-end modules} for reading and writing a \textbf{relational database} through web forms
+            \item Tested 10+ modules across 60+ \textbf{scenarios}, adding \textbf{clear validation messages} that guided users to fix input errors
+        \end{highlights}
+    \end{onecolentry}
+    \vspace{0.2 cm}
+    \begin{twocolentry}{
+        \textbf{JUN 2019 -- AUG 2019}
+        }
+        \textbf{SPOTIFY}, DATA SCIENCE INTERN
+    \end{twocolentry}
+    \begin{onecolentry}
+        \vspace{0.05 cm}
+        \begin{highlights}
+            \item Built a personalized \textbf{content recommendation engine} for a music discovery feature to increase listener engagement
+            \item Trained \textbf{item embeddings} from historical listening sessions with a \textbf{skip-gram model} implemented in TensorFlow
+            \item Surfaced recommendations in the app, lifting average \textbf{listening time} by 30\% and \textbf{track saves} by 45\%
+        \end{highlights}
+    \end{onecolentry}
+
+    % -------------------------------------------------------------------------
+    % PROJECTS
+    % -------------------------------------------------------------------------
+    % Same recipe as EXPERIENCE: PROJECT NAME, lab/department on the left,
+    % dates on the right, 2-3 bullets underneath.
+    \section{PROJECTS}
+    \begin{twocolentry}{
+        \textbf{JAN 2022 -- MAY 2022}
+        }
+        \textbf{PREDICTIVE MAINTENANCE PLATFORM}, SMART MANUFACTURING LAB, UT AUSTIN
+    \end{twocolentry}
+    \begin{onecolentry}
+        \vspace{0.05 cm}
+        \begin{highlights}
+            \item Created a \textbf{real-time simulation} of an industrial motor rig to support \textbf{anomaly detection} and \textbf{remaining-life estimation}
+            \item Built a \textbf{sensor data pipeline} covering acquisition, \textbf{noise filtering} and storage, with automated \textbf{feature extraction}
+            \item Trained a \textbf{classification model} that flags abnormal vibration patterns early to enable \textbf{preventive maintenance}
+        \end{highlights}
+    \end{onecolentry}
+    \vspace{0.2 cm}
+    \begin{twocolentry}{
+        \textbf{AUG 2021 -- DEC 2021}
+        }
+        \textbf{FAIRNESS IN SOCIAL RECOMMENDATIONS}, DEPT. OF COMPUTER SCIENCE, UT AUSTIN
+    \end{twocolentry}
+    \begin{onecolentry}
+        \vspace{0.05 cm}
+        \begin{highlights}
+            \item Studied how \textbf{algorithmic bias in friend suggestions} can create echo chambers on social platforms, measuring group separation with \textbf{graph centrality metrics} and within- versus across-group distances
+            \item Designed a simulation of \textbf{user activity} and \textbf{network growth} based on a neutral probabilistic model
+            \item Built a \textbf{recommendation model} using \textbf{graph neural networks} trained on \textbf{link prediction} tasks
+        \end{highlights}
+    \end{onecolentry}
+    \vspace{0.2 cm}
+    \begin{twocolentry}{
+        \textbf{JAN 2021 -- MAY 2021}
+        }
+        \textbf{INTERPRETABLE TEXT EMBEDDINGS}, NATURAL LANGUAGE PROCESSING LAB, UT AUSTIN
+    \end{twocolentry}
+    \begin{onecolentry}
+        \vspace{0.05 cm}
+        \begin{highlights}
+            \item Implemented a \textbf{sense-aware word embedding} model that splits ambiguous words into their distinct meanings
+            \item Benchmarked it against \textbf{GloVe} embeddings on similarity and inference tasks, improving \textbf{F1 score} by up to 12\%
+            \item Combined \textbf{embeddings} with \textbf{NMF topic modeling} to produce sparse, readable topic vectors with strong \textbf{coherence scores}
+        \end{highlights}
+    \end{onecolentry}
+
+    % -------------------------------------------------------------------------
+    % SKILLS AND EXPERTISE
+    % -------------------------------------------------------------------------
+    % One onecolentry per skill group: \textbf{Group name:} then a comma list.
+    % Keep each group to about one line. 0.05 cm = small gap between groups.
+    \section{SKILLS AND EXPERTISE}
+    \begin{onecolentry}
+        \textbf{Programming and Data:} Python (Pandas, Polars, scikit-learn, spaCy), Kotlin, SQL, Snowflake, Apache Spark, Airflow, dbt
+    \end{onecolentry}
+    \vspace{0.05 cm}
+    \begin{onecolentry}
+        \textbf{Machine Learning:} LightGBM, CatBoost, SHAP, Bayesian optimization, time-series forecasting, TensorFlow, causal inference
+    \end{onecolentry}
+    \vspace{0.05 cm}
+    \begin{onecolentry}
+        \textbf{NLP:} text embeddings, NMF topic modeling, named-entity recognition, semantic similarity evaluation
+    \end{onecolentry}
+    \vspace{0.05 cm}
+    \begin{onecolentry}
+        \textbf{Generative AI and Agents:} LLM application development, prompt design, structured outputs, RAG, tool calling
+    \end{onecolentry}
+    \vspace{0.05 cm}
+    \begin{onecolentry}
+        \textbf{Cloud and Tools:} Microsoft Azure, Google Cloud, Docker, REST APIs, Git, Jupyter, VS Code
+    \end{onecolentry}
+    \vspace{0.05 cm}
+    \begin{onecolentry}
+        \textbf{Business and Delivery:} A/B testing, ROI analysis, revenue forecasting, Scrum, Jira, stakeholder management
+    \end{onecolentry}
+
+    % -------------------------------------------------------------------------
+    % CERTIFICATIONS
+    % -------------------------------------------------------------------------
+    % \item \textbf{Certificate name}, Issuer
+    \section{CERTIFICATIONS}
+    \begin{highlights}
+        \item \textbf{Azure AI Engineer Associate and Azure Data Scientist Associate}, Microsoft
+        \item \textbf{Professional Machine Learning Engineer}, Google Cloud
+        \item \textbf{Machine Learning Engineer -- Associate}, Amazon Web Services
+        \item \textbf{Deep Learning Specialization}, DeepLearning.AI
+    \end{highlights}
+
+    % -------------------------------------------------------------------------
+    % EXTRACURRICULAR ACTIVITIES
+    % -------------------------------------------------------------------------
+    % \textbf{Role or activity}: one line on what you do and why it matters.
+    \section{EXTRACURRICULAR ACTIVITIES}
+    \begin{onecolentry}
+        \textbf{Volunteer}: Organizing weekend food drives with a local food bank to support families facing food insecurity
+    \end{onecolentry}
+    \vspace{0.05 cm}
+    \begin{onecolentry}
+        \textbf{Mentor, University Alumni Network}: Advising students on career paths, interview preparation and learning plans
+    \end{onecolentry}
+    \vspace{0.05 cm}
+    \begin{onecolentry}
+        \textbf{Organizer, Internal Tech Talks}: Hosting monthly sessions where teams share their work and explore cross-team roles
+    \end{onecolentry}
+    \vspace{0.05 cm}
+    \begin{onecolentry}
+        \textbf{Events Lead}: Coordinating team offsites and celebrations that recognize milestones and build team spirit
+    \end{onecolentry}
+    \vspace{0.05 cm}
+    \begin{onecolentry}
+        \textbf{Hiking and Writing}: Exploring national parks and writing short travel essays about the people and places met along the way
+    \end{onecolentry}
+
+\end{document}

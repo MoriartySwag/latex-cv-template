@@ -1,0 +1,12 @@
+# LaTeX build files (they can contain your computer's file paths)
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.out
+*.toc
+*.xdv
+
+# macOS
+.DS_Store
